@@ -1,0 +1,46 @@
+import requests
+
+def get_opensea_nft_data(api_key, owner_address):
+    endpoint = f"https://api.opensea.io/api/v1/assets"
+    
+    params = {
+        "order_direction": "asc",
+        "offset": "0",
+        "limit": "10",  # Можете изменить количество NFT, которые вы хотите получить
+        "owner": owner_address,
+    }
+
+    headers = {
+        "X-API-KEY": api_key,
+    }
+
+    try:
+        response = requests.get(endpoint, params=params, headers=headers)
+
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print(f"Ошибка запроса: {response.status_code}")
+            return None
+    except requests.RequestException as e:
+        print(f"Ошибка запроса: {e}")
+        return None
+
+def display_nft_data(nft_data):
+    if nft_data:
+        for asset in nft_data["assets"]:
+            print(f"NFT Name: {asset['name']}")
+            print(f"Token ID: {asset['token_id']}")
+            print(f"Permalink: {asset['permalink']}")
+            print(f"Image URL: {asset['image_url']}")
+            print("-------------")
+    else:
+        print("Не удалось получить данные о NFT.")
+
+if __name__ == "__main__":
+    # Замените на свой API ключ и адрес кошелька
+    opensea_api_key = "ВАШ_API_КЛЮЧ"
+    owner_address = "АДРЕС_ВЛАДЕЛЬЦА_NFT"
+
+    nft_data = get_opensea_nft_data(opensea_api_key, owner_address)
+    display_nft_data(nft_data)
